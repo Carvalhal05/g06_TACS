@@ -34,7 +34,7 @@ Attributes (`id`, `name`, `isMandatory`, `type`) are values stored in the object
 | digital | Feature | id="digital", name="Digital", isMandatory=false, parent=display, group=xor1 |
 | sensors | Feature | id="sensors", name="Sensors", isMandatory=false, parent=watch, children={gps, heartRate}, groups={or1} |
 | gps | Feature | id="gps", name="GPS", isMandatory=false, parent=sensors, group=or1 |
-| heartRate | Feature | id="heartRate", name="Heart Rate", isMandatory=false, parent=sensors, group=or1 |
+| heartRate | Feature | id="heartrate", name="Heartrate", isMandatory=false, parent=sensors, group=or1 |
 | xor1 | Xor | parent=display, members={analog, digital} |
 | or1 | Or | parent=sensors, members={gps, heartRate} |
 | r1 | RequiresConstraint | source=gps, target=digital |
@@ -43,7 +43,7 @@ Attributes (`id`, `name`, `isMandatory`, `type`) are values stored in the object
 | ch1 | FeatureChoice | type=REQUIRED, feature=gps |
 | ch2 | FeatureChoice | type=EXCLUDED, feature=heartRate |
 
-## 3. Solution object model (request "soGPS")
+## 3. Solution object model
 
 ### 3.1 Formula
 
@@ -93,9 +93,9 @@ Each row is one Clause object and each term is one Literal object. The rule "chi
 Example of one clause written as objects (c12 ( ¬gps ∨ digital)):
 
 ```
-c12  : Clause    id="c12"   literals={l12a, l12b}
-l12a : Literal   isNegated=true    target=v_gps
-l12b : Literal   isNegated=false   target=v_digital
+c12  : Clause    id="c12"   literals={l12_1, l12_2}
+l12_1 : Literal   isNegated=true    target=v_gps
+l12_2 : Literal   isNegated=false   target=v_digital
 ```
 
 ### 3.4 Solver configuration
@@ -110,15 +110,15 @@ The number of Grover rounds is ⌊π/4 · √(N/M)⌋, with N = 2^7 = 128 states
 
 A single valid configuration: **watch, display, digital, sensors, gps**.
 
-## 4. Other requests on the same feature model
+## Object Models
 
-To cover the cases asked in the assignment (several solutions, one solution, no solution), only the SelectionRequest changes. The first 13 clauses stay the same and only the clauses coming from the choices change.
+### Object Problem model
 
-| Request | Choices | Clauses | Solutions | rounds |
-|---|---|---|---|---|
-| soGPS | gps REQUIRED, heartRate EXCLUDED | 15 | 1 | 8 |
-| comGPS | gps REQUIRED | 14 | 2 | 6 |
-| gpsAnalog | gps REQUIRED, analog REQUIRED | 15 | 0 | n/a |
+<img width="908" height="505" alt="objectProblem" src="https://github.com/user-attachments/assets/faee1c37-fde4-4928-a4d8-cb1b01111ccd" />
 
-- **comGPS:** without c15, heartRate is free, so there are 2 solutions (with and without heart rate). knownSolutions=2 and rounds = ⌊π/4 · √(128/2)⌋ = 6.
-- **gpsAnalog:** c14 = gps and c15 = analog. GPS requires digital (c12) and the Xor forbids analog and digital together (c7), so there is no valid configuration. No number of rounds makes sense here: Grover should not find any marked state, and the measured results should look uniformly random.
+
+### Object Solution model
+
+<img width="1197" height="846" alt="objectDomain" src="https://github.com/user-attachments/assets/0c1fc612-8c20-4b1d-afde-7a8789e26eea" />
+
+
