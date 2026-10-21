@@ -7,17 +7,17 @@ The model has 7 features, so the CNF has 7 variables and the Grover circuit need
 ## 1. The feature model
 
 ```
-relogio (root)                    watch
-├── mostrador (mandatory)         display
-│     └── Xor { analogico, digital }
-└── sensores (optional)           sensors
-      └── Or { gps, cardio }
+watch (root)
+├── display (mandatory)
+│     └── Xor { analog, digital }
+└── sensors (optional)
+      └── Or { gps, heartRate }
 
 r1: gps requires digital
-e1: analogico excludes cardio
+e1: analog excludes heartRate
 ```
 
-A watch always has a display, which is either analog or digital (Xor). It may have sensors and, if it does, it has GPS, a heart rate sensor (cardio) or both (Or). GPS needs a digital display, and the analog display does not support the heart rate sensor.
+A watch always has a display, which is either analog or digital (Xor). It may have sensors and, if it does, it has GPS, a heart rate sensor or both (Or). GPS needs a digital display, and the analog display does not support the heart rate sensor.
 
 The example covers every construct of the Problem DSL: root, mandatory and optional features, an Xor group, an Or group, a requires constraint, an excludes constraint and a selection request with both REQUIRED and EXCLUDED choices.
 
@@ -27,21 +27,21 @@ Attributes (`id`, `name`, `isMandatory`, `type`) are values stored in the object
 
 | Object | Class | Attributes and links |
 |---|---|---|
-| fm | FeatureModel | name="SmartWatch", root=relogio, features={relogio, mostrador, analogico, digital, sensores, gps, cardio} |
-| relogio | Feature | id="relogio", name="Relógio", isMandatory=false, children={mostrador, sensores} |
-| mostrador | Feature | id="mostrador", name="Mostrador", isMandatory=true, parent=relogio, children={analogico, digital}, groups={xor1} |
-| analogico | Feature | id="analogico", name="Analógico", isMandatory=false, parent=mostrador, group=xor1 |
-| digital | Feature | id="digital", name="Digital", isMandatory=false, parent=mostrador, group=xor1 |
-| sensores | Feature | id="sensores", name="Sensores", isMandatory=false, parent=relogio, children={gps, cardio}, groups={or1} |
-| gps | Feature | id="gps", name="GPS", isMandatory=false, parent=sensores, group=or1 |
-| cardio | Feature | id="cardio", name="Cardio", isMandatory=false, parent=sensores, group=or1 |
-| xor1 | Xor | parent=mostrador, members={analogico, digital} |
-| or1 | Or | parent=sensores, members={gps, cardio} |
+| fm | FeatureModel | name="SmartWatch", root=watch, features={watch, display, analog, digital, sensors, gps, heartRate} |
+| watch | Feature | id="watch", name="Watch", isMandatory=false, children={display, sensors} |
+| display | Feature | id="display", name="Display", isMandatory=true, parent=watch, children={analog, digital}, groups={xor1} |
+| analog | Feature | id="analog", name="Analog", isMandatory=false, parent=display, group=xor1 |
+| digital | Feature | id="digital", name="Digital", isMandatory=false, parent=display, group=xor1 |
+| sensors | Feature | id="sensors", name="Sensors", isMandatory=false, parent=watch, children={gps, heartRate}, groups={or1} |
+| gps | Feature | id="gps", name="GPS", isMandatory=false, parent=sensors, group=or1 |
+| heartRate | Feature | id="heartRate", name="Heart Rate", isMandatory=false, parent=sensors, group=or1 |
+| xor1 | Xor | parent=display, members={analog, digital} |
+| or1 | Or | parent=sensors, members={gps, heartRate} |
 | r1 | RequiresConstraint | source=gps, target=digital |
-| e1 | ExcludesConstraint | source=analogico, target=cardio |
+| e1 | ExcludesConstraint | source=analog, target=heartRate |
 | sr1 | SelectionRequest | name="soGPS", choices={ch1, ch2} |
 | ch1 | FeatureChoice | type=REQUIRED, feature=gps |
-| ch2 | FeatureChoice | type=EXCLUDED, feature=cardio |
+| ch2 | FeatureChoice | type=EXCLUDED, feature=heartRate |
 
 ## 3. Solution object model (request "soGPS")
 
@@ -49,7 +49,7 @@ Attributes (`id`, `name`, `isMandatory`, `type`) are values stored in the object
 
 ```
 cnf : CnfFormula   name="SmartWatch_soGPS"
-                   variables={v_relogio, ..., v_cardio}
+                   variables={v_watch, ..., v_heartRate}
                    clauses={c1, ..., c15}
                    solverconfig=cfg
 ```
@@ -60,13 +60,13 @@ Each feature becomes one Variable. The `index` is the position of its qubit in t
 
 | Object | name | index |
 |---|---|---|
-| v_relogio | relogio | 0 |
-| v_mostrador | mostrador | 1 |
-| v_analogico | analogico | 2 |
+| v_watch | watch | 0 |
+| v_display | display | 1 |
+| v_analog | analog | 2 |
 | v_digital | digital | 3 |
-| v_sensores | sensores | 4 |
+| v_sensors | sensors | 4 |
 | v_gps | gps | 5 |
-| v_cardio | cardio | 6 |
+| v_heartRate | heartRate | 6 |
 
 ### 3.3 Clauses
 
@@ -74,21 +74,21 @@ Each row is one Clause object and each term is one Literal object. The rule "chi
 
 | id | Clause | Origin |
 |---|---|---|
-| c1 | relogio | root is always selected |
-| c2 | ¬mostrador ∨ relogio | child implies parent |
-| c3 | ¬relogio ∨ mostrador | mostrador is mandatory |
-| c4 | ¬analogico ∨ mostrador | child implies parent |
-| c5 | ¬digital ∨ mostrador | child implies parent |
-| c6 | ¬mostrador ∨ analogico ∨ digital | xor1: at least one member |
-| c7 | ¬analogico ∨ ¬digital | xor1: at most one member |
-| c8 | ¬sensores ∨ relogio | child implies parent |
-| c9 | ¬gps ∨ sensores | child implies parent |
-| c10 | ¬cardio ∨ sensores | child implies parent |
-| c11 | ¬sensores ∨ gps ∨ cardio | or1: at least one member |
+| c1 | watch | root is always selected |
+| c2 | ¬display ∨ watch | child implies parent |
+| c3 | ¬watch ∨ display | display is mandatory |
+| c4 | ¬analog ∨ display | child implies parent |
+| c5 | ¬digital ∨ display | child implies parent |
+| c6 | ¬display ∨ analog ∨ digital | xor1: at least one member |
+| c7 | ¬analog ∨ ¬digital | xor1: at most one member |
+| c8 | ¬sensors ∨ watch | child implies parent |
+| c9 | ¬gps ∨ sensors | child implies parent |
+| c10 | ¬heartRate ∨ sensors | child implies parent |
+| c11 | ¬sensors ∨ gps ∨ heartRate | or1: at least one member |
 | c12 | ¬gps ∨ digital | r1 (requires) |
-| c13 | ¬analogico ∨ ¬cardio | e1 (excludes) |
+| c13 | ¬analog ∨ ¬heartRate | e1 (excludes) |
 | c14 | gps | ch1 (REQUIRED) |
-| c15 | ¬cardio | ch2 (EXCLUDED) |
+| c15 | ¬heartRate | ch2 (EXCLUDED) |
 
 Example of one clause written as objects (c12 ( ¬gps ∨ digital)):
 
@@ -108,7 +108,7 @@ The number of Grover rounds is ⌊π/4 · √(N/M)⌋, with N = 2^7 = 128 states
 
 ### 3.5 Expected result
 
-A single valid configuration: **relogio, mostrador, digital, sensores, gps**.
+A single valid configuration: **watch, display, digital, sensors, gps**.
 
 ## 4. Other requests on the same feature model
 
@@ -116,9 +116,9 @@ To cover the cases asked in the assignment (several solutions, one solution, no 
 
 | Request | Choices | Clauses | Solutions | rounds |
 |---|---|---|---|---|
-| soGPS | gps REQUIRED, cardio EXCLUDED | 15 | 1 | 8 |
+| soGPS | gps REQUIRED, heartRate EXCLUDED | 15 | 1 | 8 |
 | comGPS | gps REQUIRED | 14 | 2 | 6 |
-| gpsAnalogico | gps REQUIRED, analogico REQUIRED | 15 | 0 | n/a |
+| gpsAnalog | gps REQUIRED, analog REQUIRED | 15 | 0 | n/a |
 
-- **comGPS:** without c15, cardio is free, so there are 2 solutions (with and without cardio). knownSolutions=2 and rounds = ⌊π/4 · √(128/2)⌋ = 6.
-- **gpsAnalogico:** c14 = gps and c15 = analogico. GPS requires digital (c12) and the Xor forbids analog and digital together (c7), so there is no valid configuration. No number of rounds makes sense here: Grover should not find any marked state, and the measured results should look uniformly random.
+- **comGPS:** without c15, heartRate is free, so there are 2 solutions (with and without heart rate). knownSolutions=2 and rounds = ⌊π/4 · √(128/2)⌋ = 6.
+- **gpsAnalog:** c14 = gps and c15 = analog. GPS requires digital (c12) and the Xor forbids analog and digital together (c7), so there is no valid configuration. No number of rounds makes sense here: Grover should not find any marked state, and the measured results should look uniformly random.
