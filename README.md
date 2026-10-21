@@ -20,5 +20,5 @@ Problem B1: product configuration from a feature model (SAT / CNF, Grover search
 | Hand-built example object models (SmartWatch) | [Part1/Example.md](Part1/Example.md), [Part1/images/objectProblem.png](Part1/images/objectProblem.png), [Part1/images/objectSolution.png](Part1/images/objectSolution.png) |
 | BESSER project (can be imported into the BESSER web editor) | [Part1/TACS262_Assignment-15.json](Part1/TACS262_Assignment-15.json) |
 | Test instances | [Part1/Instances.md](Part1/Instances.md) |
-| Report | [Part1/TACSPart1.pdf](Part1/TACSPart1.pdf) |
+| Report | [Part1/TACSPart1.pdf](Part1/ReportPart1.pdf) |
 | LLM usage log | [Part1/AILog.md](Part1/AILog.md) |
