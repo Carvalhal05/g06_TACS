@@ -14,5 +14,6 @@ This table logs every session where an LLM was used for the first part of the pr
 | 6 | João | Opus 5.5 | Asked for help structuring the report (LaTeX skeleton for the report to be written). | LaTeX skeleton with the header (course, FEUP and our names) and the concept tables already in place. The report text itself was written by us. |
 | 7 | João | Opus 5.5 | Asked for further help with the formulation and correctness of our already semi-developed watch example. | Review and completion of the watch feature model, the matching CNF object model and `SolverConfig`.|
 | 8 | João | Opus 5.5 | Asked for the .md skeleton for this log. |  A draft of this table, which we then reviewed and rewrote row by row. |
-| 9 | Ana | | *(add Ana's sessions here, if any)* | |
+| 9 | João | Opus 5.5 | Asked for help creating a figure for the report showing how each Problem DSL element is mapped to the Solution DSL. | The desired figure used in the report. |
+| 10 | Ana | | *(add Ana's sessions here, if any)* | |
 
