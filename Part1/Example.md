@@ -159,6 +159,10 @@ Eight valid configurations. All of them contain **watch, display, digital, batte
 
 The REQUIRED `gps` forces `sensors` and, through requiresConstraint_1, `digital`; `digital` excludes `analog` and forces `battery`. The EXCLUDED `heartrate` leaves `gps` as the only member of or_1.
 
+### 3.6 Output of T1
+
+T1 (Part II) produces this solution model from the problem model above: [Part2/generated/I3_SmartWatch_onlyGPS.py](../Part2/generated/I3_SmartWatch_onlyGPS.py). It has the same 20 clauses and the same SolverConfig (checked by [Part2/test_part2.py](../Part2/test_part2.py)). Only the numbering differs: T1 numbers the variables in depth-first order of the tree (watch 0, display 1, analog 2, digital 3, battery 4, steps 5, temperature 6, weather 7, sensors 8, gps 9, heartrate 10) and the clauses in the order of its rules. See [Part2/README.md](../Part2/README.md).
+
 ## Object models (earlier 7-feature version)
 
 These images show the earlier version of the example (without battery, temperature, steps and weather) and are to be updated.

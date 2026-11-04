@@ -2,19 +2,21 @@
 
 All instances come from the SmartWatch product line of the main example ([Example.md](Example.md)), so the presentation can focus on one domain. They differ in the size of the feature model and in the selection request. Together they cover the instance kinds asked for in Annex A of the assignment: a tiny one checkable by hand, one with a known unique solution, several solutions, no solution, and the largest size we target.
 
+The problem object models of these instances are in [Part2/instances.py](../Part2/instances.py), and the T1 outputs with every clause and solution in [Part2/generated/T1_report.md](../Part2/generated/T1_report.md).
+
 | # | Feature model | Request | Role | n (variables) | m (clauses) | M (solutions) | Rounds | n + m + 1 |
 |---|---|---|---|---|---|---|---|---|
 | I1 | MiniWatch (4 features) | digitalOnly | tiny, checkable by hand | 4 | 8 | 1 | 3 | 13 |
 | I2 | SmartWatch, Part I version (7 features) | onlyGPS | known unique solution | 7 | 15 | 1 | 8 | 23 |
 | I3 | SmartWatch (11 features) | onlyGPS | **main example**, several solutions | 11 | 20 | 8 | 12 | 32 |
 | I4 | SmartWatch (11 features) | fullDigital | largest size, unique solution, most rounds | 11 | 23 | 1 | 35 | 35 |
-| I5 | SmartWatch (11 features) | analogWithGPS | no solution | 11 | 20 | 0 | — | 32 |
+| I5 | SmartWatch (11 features) | analogWithGPS | no solution | 11 | 20 | 0 | 1 (see I5) | 32 |
 
 How the numbers were obtained:
 
 - **m** follows the mapping rules of the Problem DSL concept table (Batory, 2005): one clause for the root, the "child implies parent" clause once per child, the "parent implies child" clause for mandatory features, one "at least one member" clause per group, pairwise "at most one" clauses for Xor groups, one clause per cross-tree constraint and one unit clause per `FeatureChoice`.
 - **M** was obtained by brute force over all 2^n assignments. This is the classical baseline of Part II.
-- **Rounds** = ⌊π/4 · √(N/M)⌋ with N = 2^n (Boyer et al., 1998). It is undefined when M = 0 (I5).
+- **Rounds** = ⌊π/4 · √(N/M)⌋ with N = 2^n (Boyer et al., 1998). The formula is undefined when M = 0; T1 then uses 1 round (see I5).
 - **n + m + 1** is the number of qubits if the oracle uses one ancilla per clause plus one output qubit, as in the party planning oracle of the course slides. Only I1 stays under the ~20 qubits of the assignment with that construction, so T2 has to use fewer ancillas.
 
 ## I1 · MiniWatch, digitalOnly
@@ -51,7 +53,7 @@ Unique solution: **watch, display, digital, battery, temperature, steps, weather
 
 Same feature model as I3. Request: REQUIRED analog, REQUIRED gps.
 
-No solution: gps requires digital, and the Xor group of display forbids analog and digital together. Here `knownSolutions = 0` and the rounds formula is undefined. The OCL rule `PositiveExecutionParams` still requires `rounds > 0`, so the behaviour for M = 0 has to be decided in Part II.
+No solution: gps requires digital, and the Xor group of display forbids analog and digital together. Here `knownSolutions = 0` and the rounds formula is undefined. T1 sets `rounds = 1`: with no solution the oracle marks nothing, so every round leaves the uniform superposition unchanged and the number of rounds does not change the result. 1 is the smallest value allowed by the OCL rule `PositiveExecutionParams` (`rounds > 0`). The run must measure no valid configuration.
 
 ## References
 
