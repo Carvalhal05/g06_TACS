@@ -17,8 +17,9 @@ Problem B1: product configuration from a feature model (SAT / CNF, Grover search
 | Concept list, Solution DSL | [Part1/images/solution_dsl_table.png](Part1/images/solution_dsl_table.png) |
 | Problem DSL metamodel with OCL | [Part1/tacs262_assignment_project-4.py](Part1/tacs262_assignment_project-4.py) (model `Problem_DSL`), [Part1/images/problemDSL.png](Part1/images/problemDSL.png) |
 | Solution DSL metamodel with OCL | [Part1/tacs262_assignment_project-4.py](Part1/tacs262_assignment_project-4.py) (model `Solution_DSL`), [Part1/images/SolutionDSL.png](Part1/images/SolutionDSL.png) |
-| Hand-built example object models (SmartWatch) | [Part1/Example.md](Part1/Example.md), [Part1/images/objectProblem.png](Part1/images/objectProblem.png), [Part1/images/objectSolution.png](Part1/images/objectSolution.png) |
-| BESSER project (can be imported into the BESSER web editor) | [Part1/TACS262_Assignment-15.json](Part1/TACS262_Assignment-15.json) |
-| Test instances | [Part1/Instances.md](Part1/Instances.md) |
-| Report | [Part1/TACSPart1.pdf](Part1/ReportPart1.pdf) |
+| Hand-built example object models (SmartWatch, 11 features) | [Part1/Example.md](Part1/Example.md), [Part1/tacs262_assignment_project-4.py](Part1/tacs262_assignment_project-4.py) (models `Object_Problema_Diagram` and `Object_Solution_Diagram`) |
+| Object model images (earlier 7-feature version) | [Part1/images/objectProblem.png](Part1/images/objectProblem.png), [Part1/images/objectSolution.png](Part1/images/objectSolution.png) |
+| BESSER project (can be imported into the BESSER web editor; object models still in the earlier 7-feature version) | [Part1/TACS262_Assignment-15.json](Part1/TACS262_Assignment-15.json) |
+| Test instances (SmartWatch family) | [Part1/Instances.md](Part1/Instances.md) |
+| Report | [Part1/ReportPart1.pdf](Part1/ReportPart1.pdf) |
 | LLM usage log | [Part1/AILog.md](Part1/AILog.md) |
