@@ -1,4 +1,4 @@
-"""Tests for T1, the classical baseline and the validation.
+"""Tests for T1, T2, the classical baseline and the validation.
 
     python -m unittest test_part2 -v      (from the Part2 folder)
 """
@@ -13,6 +13,7 @@ import baseline
 import checks
 import instances
 import t1_problem_to_cnf as t1
+import t2_cnf_to_quantum as t2
 import validation
 from run_t1 import OUT, load_solution_model, signature
 
@@ -158,6 +159,68 @@ class TestValidation(unittest.TestCase):
         r = validation.validate(out, self.ideal_counts(out, 1024), problem)
         self.assertEqual((r["validShots"], r["foundSolutions"], r["theoreticalSuccess"]), (0, 0, 0.0))
         self.assertIn("not valid", validation.report("I5", r))
+
+
+class TestT2(unittest.TestCase):
+    """The oracle only has X gates with controls, so it can be run on classical bits, without Qiskit."""
+
+    @staticmethod
+    def apply(gates, bits):
+        from besser.BUML.metamodel.quantum import ControlState
+        for g in gates:
+            if all(bits[q] == (s == ControlState.CONTROL) for q, s in zip(g.control_qubits, g.control_states)):
+                bits[g.target_qubits[0]] = not bits[g.target_qubits[0]]
+        return bits
+
+    @staticmethod
+    def parts(circuit):
+        ops = circuit.operations
+        oracle = next(op for op in ops if op.name == "oracle")
+        diffuser = next(op for op in ops if op.name == "diffuser")
+        return ops, oracle, diffuser
+
+    def test_oracle_marks_exactly_the_baseline_solutions(self):
+        for inst, (_d, problem, request) in INSTANCES.items():
+            out, _ = t1.transform(problem, request_name=request)
+            circuit, layout = t2.transform(out)
+            _ops, oracle, _diffuser = self.parts(circuit)
+            names, clauses = baseline.read_cnf(out)
+            extra = len(layout["counter"]) + 1
+            for bits in product((False, True), repeat=len(names)):
+                end = self.apply(oracle.gates, list(bits) + [False] * extra)
+                self.assertEqual(end[layout["output"]], baseline.satisfies(bits, clauses), (inst, bits))
+                self.assertEqual(end[:len(names)], list(bits), inst)                   # inputs unchanged
+                self.assertFalse(any(end[q] for q in layout["counter"]), inst)         # counter back to 0
+
+    def test_rounds_come_from_the_solver_config(self):
+        for inst, (_d, problem, request) in INSTANCES.items():
+            out, _ = t1.transform(problem, request_name=request)
+            ops, oracle, diffuser = self.parts(t2.transform(out)[0])
+            self.assertEqual(sum(op is oracle for op in ops), EXPECTED[inst][3], inst)
+            self.assertEqual(sum(op is diffuser for op in ops), EXPECTED[inst][3], inst)
+
+    def test_every_instance_fits_in_20_qubits(self):
+        for inst, (_d, problem, request) in INSTANCES.items():
+            out, _ = t1.transform(problem, request_name=request)
+            circuit, layout = t2.transform(out)
+            self.assertLessEqual(circuit.num_qubits, 20, inst)
+            self.assertEqual(circuit.num_clbits, len(layout["variables"]), inst)
+
+    def test_search_qubit_i_is_measured_into_bit_i(self):
+        from besser.BUML.metamodel.quantum import Measurement
+        out, _ = t1.transform(INSTANCES["I2"][1], request_name="onlyGPS")
+        circuit, layout = t2.transform(out)
+        measured = [(op.target_qubits[0], op.output_bit) for op in circuit.operations if isinstance(op, Measurement)]
+        self.assertEqual(measured, [(i, i) for i in layout["search"]])
+
+    def test_contradictory_unit_clauses_mark_nothing(self):
+        problem = instances.build_problem_model(instances.MINIWATCH, ("noWatch", [], ["watch"]))
+        out, _ = t1.transform(problem, request_name="noWatch")          # (watch) and (not watch)
+        circuit, layout = t2.transform(out)
+        _ops, oracle, _diffuser = self.parts(circuit)
+        extra = len(layout["counter"]) + 1
+        for bits in product((False, True), repeat=4):
+            self.assertFalse(self.apply(oracle.gates, list(bits) + [False] * extra)[layout["output"]])
 
 
 if __name__ == "__main__":

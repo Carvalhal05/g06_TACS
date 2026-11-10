@@ -31,11 +31,12 @@ How to run, design decisions and references: [Part2/README.md](Part2/README.md).
 | Deliverable | Where |
 |---|---|
 | T1 (Problem DSL → Solution DSL, model-to-model) | [Part2/t1_problem_to_cnf.py](Part2/t1_problem_to_cnf.py) |
-| T1 outputs for the test instances (B-UML, input of T2) | [Part2/generated/](Part2/generated) |
+| T2 (Solution DSL → BESSER quantum model, model-to-model) | [Part2/t2_cnf_to_quantum.py](Part2/t2_cnf_to_quantum.py) |
+| T1 & T2 outputs and generated Qiskit code for test instances | [Part2/generated/](Part2/generated) |
 | Clause-by-clause trace of T1 and the classical baseline for every instance | [Part2/generated/T1_report.md](Part2/generated/T1_report.md) |
 | Classical baseline (brute force) | [Part2/baseline.py](Part2/baseline.py) |
 | Validation of quantum results against the baseline | [Part2/validation.py](Part2/validation.py) |
 | OCL invariants checked on T1's input and output | [Part2/checks.py](Part2/checks.py) |
 | Tests | [Part2/test_part2.py](Part2/test_part2.py) |
-| T2 (Solution DSL → BESSER quantum model), generated Qiskit code, runs | to do |
 | Report | to do |
+| LLM usage log | [Part1/AILog.md](Part2/AILog.md) |
