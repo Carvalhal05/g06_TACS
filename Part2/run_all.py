@@ -60,7 +60,7 @@ def run_instance(inst, problem, request, shots):
     counts = dict(scope["counts"])
     (folder / "counts.json").write_text(json.dumps(counts, indent=1, sort_keys=True), encoding="utf-8")
 
-    results = validation.validate(solution, counts, problem)
+    results = validation.validate(solution, counts, problem, request)
     return results, layout, seconds, domain_answer(problem, request, solution, results)
 
 
@@ -121,9 +121,7 @@ def main(argv):
         r, layout, seconds, answer = run_instance(inst, problem, request, shots)
         domain += [f"### {inst} · {desc}", "", *[f"- {line}" for line in answer], ""]
         qubits = len(layout["search"]) + len(layout["counter"]) + 1
-        ok = (r["allFoundAreBaselineSolutions"] and r["knownSolutions"] == r["baselineSolutions"]
-            and (r["baselineSolutions"] == 0
-                or (r["mostFrequent"] is not None and r["mostFrequent"][3])))
+        ok = r["passed"]
         summary.append(
             f"| {inst} | {r['variables']} | {qubits} ({len(layout['search'])} + {len(layout['counter'])} + 1) "
             f"| {r['baselineSolutions']} | {r['rounds']} | {r['measuredSuccess']:.3f} | {r['theoreticalSuccess']:.3f} "
@@ -144,10 +142,12 @@ def main(argv):
         "# Results of the chain and validation against the classical baseline", "",
         "Written by `run_all.py`; do not edit by hand. Measured values change slightly from run to run",
         "(sampling noise).", "",
-        "M is counted by brute force over the 2ⁿ assignments (classical baseline). P measured is the share",
-        "of shots that gave a valid configuration; P theoretical is sin²((2k+1)θ) with sin²θ = M/2ⁿ",
-        "(Boyer et al., 1998). Result is OK when every measured valid configuration is a baseline",
-        "solution and, if there are solutions, the most frequent measurement is one of them.", "",
+        "M is counted by brute force over the 2ⁿ assignments directly on the feature model, without the",
+        "CNF of T1 (classical baseline, independent of T1 and T2). P measured is the share of shots that",
+        "gave a valid configuration; P theoretical is sin²((2k+1)θ) with sin²θ = M/2ⁿ (Boyer et al., 1998).",
+        "Result is OK when (1) the solutions of the T1 CNF are exactly the baseline configurations,",
+        "(2) SolverConfig.knownSolutions = M, (3) P measured is within 3σ of P theoretical (binomial",
+        "sampling noise), and (4) if M > 0, the most frequent measurement is a valid configuration.", "",
         "## Results in domain terms", "", *domain,
         "## Validation against the classical baseline", "",
         *summary, "", *sections])

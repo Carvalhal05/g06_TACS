@@ -148,17 +148,42 @@ class TestValidation(unittest.TestCase):
         for inst in ("I1", "I3", "I4"):
             _d, problem, request = INSTANCES[inst]
             out, _ = t1.transform(problem, request_name=request)
-            r = validation.validate(out, self.ideal_counts(out, 1024), problem)
-            self.assertTrue(r["allFoundAreBaselineSolutions"], inst)
+            r = validation.validate(out, self.ideal_counts(out, 1024), problem, request)
+            self.assertTrue(r["passed"], (inst, r["checks"]))
+            self.assertEqual(r["baselineSource"], "feature model", inst)
             self.assertAlmostEqual(r["measuredSuccess"], r["theoreticalSuccess"], delta=0.03, msg=inst)
             self.assertTrue(r["mostFrequent"][3], inst)
 
     def test_no_solution_instance(self):
         _d, problem, request = INSTANCES["I5"]
         out, _ = t1.transform(problem, request_name=request)
-        r = validation.validate(out, self.ideal_counts(out, 1024), problem)
+        r = validation.validate(out, self.ideal_counts(out, 1024), problem, request)
         self.assertEqual((r["validShots"], r["foundSolutions"], r["theoreticalSuccess"]), (0, 0, 0.0))
+        self.assertTrue(r["passed"], r["checks"])
         self.assertIn("not valid", validation.report("I5", r))
+
+    def test_a_wrong_cnf_is_caught(self):
+        # Validation must not compare the CNF with itself. A CNF that encodes the Xor of I1 as an Or
+        # (what a T1 without rule R5 would produce) also accepts Analog + Digital; validated against
+        # the real I1 feature model, the check against the baseline fails.
+        _d, problem, request = INSTANCES["I1"]
+        as_or = {**instances.MINIWATCH, "groups": [("Or", "or_1", "display", ["analog", "digital"])]}
+        wrong, _ = t1.transform(instances.build_problem_model(as_or, ("digitalOnly", ["digital"], [])),
+                                request_name=request)
+        r = validation.validate(wrong, self.ideal_counts(wrong, 1024), problem, request)
+        self.assertFalse(r["checks"]["cnfMatchesBaseline"])
+        self.assertFalse(r["passed"])
+
+    def test_a_wrong_oracle_is_caught(self):
+        # Uniform counts (what an oracle that marks nothing produces) are far from the Grover success
+        # probability, so the sampling-noise check fails.
+        _d, problem, request = INSTANCES["I3"]
+        out, _ = t1.transform(problem, request_name=request)
+        n = len(baseline.read_cnf(out)[0])
+        uniform = {qiskit_key(bits): 1 for bits in product((False, True), repeat=n)}
+        r = validation.validate(out, uniform, problem, request)
+        self.assertFalse(r["checks"]["successWithinSamplingNoise"])
+        self.assertFalse(r["passed"])
 
 
 class TestT2(unittest.TestCase):
