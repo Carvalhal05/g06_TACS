@@ -32,6 +32,7 @@ How to run, design decisions and references: [Part2/README.md](Part2/README.md).
 |---|---|
 | T1 (Problem DSL → Solution DSL, model-to-model) | [Part2/t1_problem_to_cnf.py](Part2/t1_problem_to_cnf.py) |
 | T2 (Solution DSL → BESSER quantum model, model-to-model) | [Part2/t2_cnf_to_quantum.py](Part2/t2_cnf_to_quantum.py) |
+| Single command for the whole chain (T1 → T2 → T3 → Aer → validation), used to generate everything in `generated/` | [Part2/run_all.py](Part2/run_all.py) |
 | T1 & T2 outputs and generated Qiskit code for test instances | [Part2/generated/](Part2/generated) |
 | Clause-by-clause trace of T1 and the classical baseline for every instance | [Part2/generated/T1_report.md](Part2/generated/T1_report.md) |
 | Classical baseline (brute force) | [Part2/baseline.py](Part2/baseline.py) |
