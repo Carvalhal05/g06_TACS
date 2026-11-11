@@ -8,9 +8,43 @@ of shots that gave a valid configuration; P theoretical is sin²((2k+1)θ) with 
 (Boyer et al., 1998). Result is OK when every measured valid configuration is a baseline
 solution and, if there are solutions, the most frequent measurement is one of them.
 
+## Results in domain terms
+
+### I1 · MiniWatch, digitalOnly (tiny, checkable by hand)
+
+- Product line: MiniWatch. Request "digitalOnly": a product with Digital.
+- Answer, a valid product: Watch, Display, Digital.
+- Features left out: Analog.
+
+### I2 · SmartWatch Part I version (7 features), onlyGPS (unique solution)
+
+- Product line: SmartWatch7. Request "onlyGPS": a product with GPS; without Heartrate.
+- Answer, a valid product: Watch, Display, Digital, Sensors, GPS.
+- Features left out: Analog, Heartrate.
+
+### I3 · SmartWatch (11 features), onlyGPS (main example, several solutions)
+
+- Product line: SmartWatch. Request "onlyGPS": a product with GPS; without Heartrate.
+- Answer, a valid product: Watch, Display, Digital, Battery, StepsDistance, Sensors, GPS.
+- Features left out: Analog, Temperature, Weather, Heartrate.
+- It is one of 8 valid products; the run measured 8 of them (listed below).
+
+### I4 · SmartWatch (11 features), fullDigital (largest, unique solution)
+
+- Product line: SmartWatch. Request "fullDigital": a product with GPS, StepsDistance, Temperature, Weather; without Heartrate.
+- Answer, a valid product: Watch, Display, Digital, Battery, StepsDistance, Temperature, Weather, Sensors, GPS.
+- Features left out: Analog, Heartrate.
+
+### I5 · SmartWatch (11 features), analogWithGPS (no solution)
+
+- Product line: SmartWatch. Request "analogWithGPS": a product with Analog, GPS.
+- Answer: no product of this product line satisfies the request (none of the 1024 measurements is a valid configuration).
+
+## Validation against the classical baseline
+
 | Instance | n | Qubits (search + counter + output) | M | Rounds k | P measured | P theoretical | Solutions found | Oracle calls per shot | Brute-force evaluations | Result |
 |---|---|---|---|---|---|---|---|---|---|---|
-| I1 | 4 | 8 (4 + 3 + 1) | 1 | 3 | 0.981 | 0.961 | 1 of 1 | 3 | 16 | OK |
+| I1 | 4 | 8 (4 + 3 + 1) | 1 | 3 | 0.966 | 0.961 | 1 of 1 | 3 | 16 | OK |
 | I2 | 7 | 12 (7 + 4 + 1) | 1 | 8 | 0.995 | 0.996 | 1 of 1 | 8 | 128 | OK |
 | I3 | 11 | 17 (11 + 5 + 1) | 8 | 12 | 1.000 | 1.000 | 8 of 8 | 12 | 2048 | OK |
 | I4 | 11 | 17 (11 + 5 + 1) | 1 | 35 | 1.000 | 1.000 | 1 of 1 | 35 | 2048 | OK |
@@ -23,19 +57,19 @@ solution and, if there are solutions, the most frequent measurement is one of th
 | Variables n / clauses m / states N | 4 / 8 / 16 |
 | Solutions M (classical brute force) | 1 (SolverConfig.knownSolutions = 1) |
 | Grover rounds k / shots | 3 / 1024 |
-| Success probability, measured | 0.981 (1005 of 1024 shots) |
+| Success probability, measured | 0.966 (989 of 1024 shots) |
 | Success probability, theoretical sin²((2k+1)θ) | 0.961 |
 | Distinct valid configurations measured | 1 of 1 |
 | Every measured valid configuration is a baseline solution | True |
 | Oracle calls: per shot / total | 3 / 3072 |
 | Classical brute force: formula evaluations | 16 |
-| Most frequent bitstring | `1011` (1005 shots): Digital, Display, Watch — valid |
+| Most frequent bitstring | `1011` (989 shots): Digital, Display, Watch — valid |
 
 Valid configurations measured (shots):
 
-- Digital, Display, Watch (1005)
+- Digital, Display, Watch (989)
 
-Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation time: 0.6 s
+Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation time: 0.4 s
 
 ### I2 · SmartWatch Part I version (7 features), onlyGPS (unique solution)
 
@@ -71,20 +105,20 @@ Generated code: `I2/qiskit_circuit.py` · counts: `I2/counts.json` · simulation
 | Every measured valid configuration is a baseline solution | True |
 | Oracle calls: per shot / total | 12 / 12288 |
 | Classical brute force: formula evaluations | 2048 |
-| Most frequent bitstring | `01110011011` (144 shots): Battery, Digital, Display, GPS, Sensors, Watch, Weather — valid |
+| Most frequent bitstring | `01100111011` (137 shots): Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch — valid |
 
 Valid configurations measured (shots):
 
-- Battery, Digital, Display, GPS, Sensors, Watch, Weather (144)
-- Battery, Digital, Display, GPS, Sensors, Temperature, Watch (140)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (139)
-- Battery, Digital, Display, GPS, Sensors, Watch (130)
-- Battery, Digital, Display, GPS, Sensors, Temperature, Watch, Weather (126)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch (120)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch (119)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch, Weather (106)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch (137)
+- Battery, Digital, Display, GPS, Sensors, Watch, Weather (132)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch (132)
+- Battery, Digital, Display, GPS, Sensors, Temperature, Watch (129)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch, Weather (126)
+- Battery, Digital, Display, GPS, Sensors, Watch (126)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (121)
+- Battery, Digital, Display, GPS, Sensors, Temperature, Watch, Weather (121)
 
-Generated code: `I3/qiskit_circuit.py` · counts: `I3/counts.json` · simulation time: 0.3 s
+Generated code: `I3/qiskit_circuit.py` · counts: `I3/counts.json` · simulation time: 0.2 s
 
 ### I4 · SmartWatch (11 features), fullDigital (largest, unique solution)
 
@@ -120,7 +154,7 @@ Generated code: `I4/qiskit_circuit.py` · counts: `I4/counts.json` · simulation
 | Every measured valid configuration is a baseline solution | True |
 | Oracle calls: per shot / total | 1 / 1024 |
 | Classical brute force: formula evaluations | 2048 |
-| Most frequent bitstring | `00101001011` (5 shots): Digital, Display, Sensors, Temperature, Watch — not valid |
+| Most frequent bitstring | `10110111000` (4 shots): Battery, Digital, Heartrate, Sensors, StepsDistance, Weather — not valid |
 
 No valid configuration was measured: the request cannot be satisfied.
 

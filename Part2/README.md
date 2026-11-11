@@ -9,7 +9,9 @@ Requires Python 3.12. Set up your virtual environment and install the required d
 ```
 python3.12 -m venv .venv
 source .venv/bin/activate
-python -m pip install besser==8.8.0
+python -m pip install --upgrade pip
+python -m pip install git+https://github.com/jacomecunha/BESSER.git
+python -m pip install qiskit==2.6.2 qiskit-aer==0.18.2
 ```
 
 Once installed, run the commands from this folder:

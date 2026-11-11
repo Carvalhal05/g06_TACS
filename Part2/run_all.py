@@ -7,8 +7,10 @@ For each instance of instances.py:
   1. T1: Problem DSL model -> Solution DSL model (CNF + SolverConfig)      t1_problem_to_cnf.py
   2. T2: Solution DSL model -> BESSER quantum circuit model (Grover)        t2_cnf_to_quantum.py
   3. T3: BESSER's Qiskit generator writes generated/<instance>/qiskit_circuit.py
-  4. the generated script is run as it is (Aer simulator); its `counts` are saved to counts.json
+  4. the generated script is run as it is (Aer simulator); its counts are saved to counts.json
   5. validation: the counts are decoded into features and compared with the classical baseline
+  6. the answer is written in domain terms: the product (features selected and left out) that
+     answers the selection request, or that no product can satisfy it
 
 Results: generated/results.md.
 """
@@ -23,7 +25,8 @@ import time
 from besser.generators.qiskit.qiskit_generator import QiskitGenerator
 
 import metamodels as mm
-from metamodels import attr, objects_of
+from metamodels import attr, linked, objects_of
+import baseline
 import instances
 import run_t1
 import t1_problem_to_cnf as t1
@@ -34,7 +37,7 @@ OUT = run_t1.OUT
 
 
 def run_instance(inst, problem, request, shots):
-    """T1 -> T2 -> T3 -> execution -> validation for one instance. Returns (results, layout, seconds)."""
+    """T1 -> T2 -> T3 -> execution -> validation for one instance. Returns (results, layout, seconds, domain_answer)."""
     solution, _trace = t1.transform(problem, shots=shots, request_name=request)
     circuit, layout = t2.transform(solution)
 
@@ -46,7 +49,7 @@ def run_instance(inst, problem, request, shots):
         # T3 The number of shots is read from the SolverConfig of the model.
         QiskitGenerator(circuit, output_dir=str(folder), shots=attr(cfg, "shots")).generate()
 
-    # Run the generated script unchanged and take the `counts` it computes. What it prints (the
+    # Run the generated script unchanged and take the counts it computes. What it prints (the
     # circuit drawing and the raw counts) goes to run_output.txt.
     start = time.time()
     printed = io.StringIO()
@@ -57,7 +60,45 @@ def run_instance(inst, problem, request, shots):
     counts = dict(scope["counts"])
     (folder / "counts.json").write_text(json.dumps(counts, indent=1, sort_keys=True), encoding="utf-8")
 
-    return validation.validate(solution, counts, problem), layout, seconds
+    results = validation.validate(solution, counts, problem)
+    return results, layout, seconds, domain_answer(problem, request, solution, results)
+
+
+def domain_answer(problem, request, solution, r):
+    """The result of the run in domain terms (product line, request, product), read from the models.
+
+    Measured bit i -> Variable with index i (Solution DSL) -> Feature with that id (Problem DSL).
+    The features are listed in the order of the feature tree (the variable order of T1).
+    """
+    (fm,) = objects_of(problem, mm.FeatureModel)
+    name = {attr(f, "id"): attr(f, "name") for f in linked(fm, "features")}
+    lines = [f"Product line: {attr(fm, 'name')}. No selection request: any valid product."]
+    requests = [q for q in linked(fm, "requests") if attr(q, "name") == request] if request else []
+    if requests:
+        (req,) = requests
+        asked = {"REQUIRED": [], "EXCLUDED": []}
+        for ch in linked(req, "choices"):
+            asked[attr(ch, "type")].append(name[attr(linked(ch, "feature")[0], "id")])
+        wish = "; ".join(f"{label} {', '.join(sorted(feats))}" for label, feats in
+                         (("with", asked["REQUIRED"]), ("without", asked["EXCLUDED"])) if feats)
+        lines = [f"Product line: {attr(fm, 'name')}. Request \"{request}\": a product {wish}."]
+
+    variables, _clauses = baseline.read_cnf(solution)          # feature ids, in qubit order
+    if r["baselineSolutions"] == 0:
+        lines.append("Answer: no product of this product line satisfies the request "
+                     f"(none of the {r['shots']} measurements is a valid configuration).")
+    elif r["mostFrequent"] is None:
+        lines.append("Answer: no measurement was made (the run produced no counts).")
+    elif not r["mostFrequent"][3]:
+        lines.append("Answer: the most frequent measurement is not a valid product (the run failed).")
+    else:
+        chosen = validation.decode(r["mostFrequent"][0], variables)
+        lines.append("Answer, a valid product: " + ", ".join(name[v] for v in variables if v in chosen) + ".")
+        lines.append("Features left out: " + (", ".join(name[v] for v in variables if v not in chosen) or "none") + ".")
+        if r["baselineSolutions"] > 1:
+            lines.append(f"It is one of {r['baselineSolutions']} valid products; the run measured "
+                         f"{r['foundSolutions']} of them (listed below).")
+    return lines
 
 
 def main(argv):
@@ -73,13 +114,16 @@ def main(argv):
                "| Solutions found | Oracle calls per shot | Brute-force evaluations | Result |",
                "|---|---|---|---|---|---|---|---|---|---|---|"]
     sections = []
+    domain = []                             # the answers in domain terms, one block per instance
     for inst, (desc, problem, request) in all_instances.items():
         if wanted and inst not in wanted:
             continue
-        r, layout, seconds = run_instance(inst, problem, request, shots)
+        r, layout, seconds, answer = run_instance(inst, problem, request, shots)
+        domain += [f"### {inst} · {desc}", "", *[f"- {line}" for line in answer], ""]
         qubits = len(layout["search"]) + len(layout["counter"]) + 1
         ok = (r["allFoundAreBaselineSolutions"] and r["knownSolutions"] == r["baselineSolutions"]
-              and (r["baselineSolutions"] == 0 or r["mostFrequent"][3]))
+            and (r["baselineSolutions"] == 0
+                or (r["mostFrequent"] is not None and r["mostFrequent"][3])))
         summary.append(
             f"| {inst} | {r['variables']} | {qubits} ({len(layout['search'])} + {len(layout['counter'])} + 1) "
             f"| {r['baselineSolutions']} | {r['rounds']} | {r['measuredSuccess']:.3f} | {r['theoreticalSuccess']:.3f} "
@@ -104,6 +148,8 @@ def main(argv):
         "of shots that gave a valid configuration; P theoretical is sin²((2k+1)θ) with sin²θ = M/2ⁿ",
         "(Boyer et al., 1998). Result is OK when every measured valid configuration is a baseline",
         "solution and, if there are solutions, the most frequent measurement is one of them.", "",
+        "## Results in domain terms", "", *domain,
+        "## Validation against the classical baseline", "",
         *summary, "", *sections])
     (OUT / "results.md").write_text(text, encoding="utf-8")
     print(text)
