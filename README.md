@@ -38,5 +38,5 @@ How to run, design decisions and references: [Part2/README.md](Part2/README.md).
 | Validation of quantum results against the baseline | [Part2/validation.py](Part2/validation.py) |
 | OCL invariants checked on T1's input and output | [Part2/checks.py](Part2/checks.py) |
 | Tests | [Part2/test_part2.py](Part2/test_part2.py) |
-| Report | to do |
-| LLM usage log | [Part1/AILog.md](Part2/AILog.md) |
+| Report | [Part2/ReportPart2.pdf](Part2/ReportPart2.pdf) |
+| LLM usage log | [Part2/AILog.md](Part2/AILog.md) |
