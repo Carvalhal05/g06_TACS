@@ -9,8 +9,8 @@ Requires Python 3.12. Set up your virtual environment and install the required d
 ```
 python3.12 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install git+https://github.com/jacomecunha/BESSER.git
+git clone https://github.com/jacomecunha/BESSER.git
+python -m pip install -e ./BESSER
 python -m pip install qiskit==2.6.2 qiskit-aer==0.18.2
 ```
 
@@ -37,10 +37,5 @@ python run_all.py                     # Run end-to-end chain (T1 → T2 → T3 �
 | `validation.py` | **Validation**: decodes Grover simulation counts and compares them with the baseline. |
 | `test_part2.py` | Unit tests for the pipeline. |
 | `generated/` | Generated B-UML models, T1 report, execution logs, and Qiskit circuits (do not edit manually). |
-
-## References
-
-- [B05] D. Batory, "Feature models, grammars, and propositional formulas", SPLC 2005, LNCS 3714, pp. 7–20.
-- [T07] S. Thaker, D. Batory, D. Kitchin, W. Cook, "Safe composition of product lines", GPCE 2007, pp. 95–104.
-- [BBHT98] M. Boyer, G. Brassard, P. Høyer, A. Tapp, "Tight bounds on quantum searching", Fortschritte der Physik 46, 1998.
-- [S] J. Pascoal Faria, J. Cunha, "Quantum computing: a brief introduction", TACS 2026/27 slides, 2026 (CNF).
+| `AILog.md` | LLM usage log for Part II. |
+| `ReportPart2.pdf` | Group report for Part II. |

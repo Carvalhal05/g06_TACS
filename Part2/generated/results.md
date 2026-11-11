@@ -25,8 +25,8 @@ solution and, if there are solutions, the most frequent measurement is one of th
 ### I3 · SmartWatch (11 features), onlyGPS (main example, several solutions)
 
 - Product line: SmartWatch. Request "onlyGPS": a product with GPS; without Heartrate.
-- Answer, a valid product: Watch, Display, Digital, Battery, StepsDistance, Sensors, GPS.
-- Features left out: Analog, Temperature, Weather, Heartrate.
+- Answer, a valid product: Watch, Display, Digital, Battery, StepsDistance, Temperature, Sensors, GPS.
+- Features left out: Analog, Weather, Heartrate.
 - It is one of 8 valid products; the run measured 8 of them (listed below).
 
 ### I4 · SmartWatch (11 features), fullDigital (largest, unique solution)
@@ -44,8 +44,8 @@ solution and, if there are solutions, the most frequent measurement is one of th
 
 | Instance | n | Qubits (search + counter + output) | M | Rounds k | P measured | P theoretical | Solutions found | Oracle calls per shot | Brute-force evaluations | Result |
 |---|---|---|---|---|---|---|---|---|---|---|
-| I1 | 4 | 8 (4 + 3 + 1) | 1 | 3 | 0.966 | 0.961 | 1 of 1 | 3 | 16 | OK |
-| I2 | 7 | 12 (7 + 4 + 1) | 1 | 8 | 0.995 | 0.996 | 1 of 1 | 8 | 128 | OK |
+| I1 | 4 | 8 (4 + 3 + 1) | 1 | 3 | 0.960 | 0.961 | 1 of 1 | 3 | 16 | OK |
+| I2 | 7 | 12 (7 + 4 + 1) | 1 | 8 | 0.996 | 0.996 | 1 of 1 | 8 | 128 | OK |
 | I3 | 11 | 17 (11 + 5 + 1) | 8 | 12 | 1.000 | 1.000 | 8 of 8 | 12 | 2048 | OK |
 | I4 | 11 | 17 (11 + 5 + 1) | 1 | 35 | 1.000 | 1.000 | 1 of 1 | 35 | 2048 | OK |
 | I5 | 11 | 17 (11 + 5 + 1) | 0 | 1 | 0.000 | 0.000 | 0 of 0 | 1 | 2048 | OK |
@@ -57,19 +57,19 @@ solution and, if there are solutions, the most frequent measurement is one of th
 | Variables n / clauses m / states N | 4 / 8 / 16 |
 | Solutions M (classical brute force) | 1 (SolverConfig.knownSolutions = 1) |
 | Grover rounds k / shots | 3 / 1024 |
-| Success probability, measured | 0.966 (989 of 1024 shots) |
+| Success probability, measured | 0.960 (983 of 1024 shots) |
 | Success probability, theoretical sin²((2k+1)θ) | 0.961 |
 | Distinct valid configurations measured | 1 of 1 |
 | Every measured valid configuration is a baseline solution | True |
 | Oracle calls: per shot / total | 3 / 3072 |
 | Classical brute force: formula evaluations | 16 |
-| Most frequent bitstring | `1011` (989 shots): Digital, Display, Watch — valid |
+| Most frequent bitstring | `1011` (983 shots): Digital, Display, Watch — valid |
 
 Valid configurations measured (shots):
 
-- Digital, Display, Watch (989)
+- Digital, Display, Watch (983)
 
-Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation time: 0.4 s
+Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation time: 0.2 s
 
 ### I2 · SmartWatch Part I version (7 features), onlyGPS (unique solution)
 
@@ -78,17 +78,17 @@ Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation
 | Variables n / clauses m / states N | 7 / 15 / 128 |
 | Solutions M (classical brute force) | 1 (SolverConfig.knownSolutions = 1) |
 | Grover rounds k / shots | 8 / 1024 |
-| Success probability, measured | 0.995 (1019 of 1024 shots) |
+| Success probability, measured | 0.996 (1020 of 1024 shots) |
 | Success probability, theoretical sin²((2k+1)θ) | 0.996 |
 | Distinct valid configurations measured | 1 of 1 |
 | Every measured valid configuration is a baseline solution | True |
 | Oracle calls: per shot / total | 8 / 8192 |
 | Classical brute force: formula evaluations | 128 |
-| Most frequent bitstring | `0111011` (1019 shots): Digital, Display, GPS, Sensors, Watch — valid |
+| Most frequent bitstring | `0111011` (1020 shots): Digital, Display, GPS, Sensors, Watch — valid |
 
 Valid configurations measured (shots):
 
-- Digital, Display, GPS, Sensors, Watch (1019)
+- Digital, Display, GPS, Sensors, Watch (1020)
 
 Generated code: `I2/qiskit_circuit.py` · counts: `I2/counts.json` · simulation time: 0.1 s
 
@@ -105,20 +105,20 @@ Generated code: `I2/qiskit_circuit.py` · counts: `I2/counts.json` · simulation
 | Every measured valid configuration is a baseline solution | True |
 | Oracle calls: per shot / total | 12 / 12288 |
 | Classical brute force: formula evaluations | 2048 |
-| Most frequent bitstring | `01100111011` (137 shots): Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch — valid |
+| Most frequent bitstring | `01101111011` (143 shots): Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch — valid |
 
 Valid configurations measured (shots):
 
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch (137)
-- Battery, Digital, Display, GPS, Sensors, Watch, Weather (132)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch (132)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch (143)
+- Battery, Digital, Display, GPS, Sensors, Watch, Weather (139)
+- Battery, Digital, Display, GPS, Sensors, Watch (130)
 - Battery, Digital, Display, GPS, Sensors, Temperature, Watch (129)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch, Weather (126)
-- Battery, Digital, Display, GPS, Sensors, Watch (126)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (121)
-- Battery, Digital, Display, GPS, Sensors, Temperature, Watch, Weather (121)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch (123)
+- Battery, Digital, Display, GPS, Sensors, Temperature, Watch, Weather (122)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch, Weather (120)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (118)
 
-Generated code: `I3/qiskit_circuit.py` · counts: `I3/counts.json` · simulation time: 0.2 s
+Generated code: `I3/qiskit_circuit.py` · counts: `I3/counts.json` · simulation time: 0.3 s
 
 ### I4 · SmartWatch (11 features), fullDigital (largest, unique solution)
 
@@ -139,7 +139,7 @@ Valid configurations measured (shots):
 
 - Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (1024)
 
-Generated code: `I4/qiskit_circuit.py` · counts: `I4/counts.json` · simulation time: 0.8 s
+Generated code: `I4/qiskit_circuit.py` · counts: `I4/counts.json` · simulation time: 0.7 s
 
 ### I5 · SmartWatch (11 features), analogWithGPS (no solution)
 
@@ -154,7 +154,7 @@ Generated code: `I4/qiskit_circuit.py` · counts: `I4/counts.json` · simulation
 | Every measured valid configuration is a baseline solution | True |
 | Oracle calls: per shot / total | 1 / 1024 |
 | Classical brute force: formula evaluations | 2048 |
-| Most frequent bitstring | `10110111000` (4 shots): Battery, Digital, Heartrate, Sensors, StepsDistance, Weather — not valid |
+| Most frequent bitstring | `00110001011` (4 shots): Digital, Display, Sensors, Watch, Weather — not valid |
 
 No valid configuration was measured: the request cannot be satisfied.
 
