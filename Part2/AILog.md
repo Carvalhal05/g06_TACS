@@ -16,6 +16,7 @@ This table logs every session where an LLM was used for the second part of the p
 | 6 | João | Claude (Fable 5.2) | Asked for a corrected T2, tested on the five instances. | New `t2_cnf_to_quantum.py`, `run_all.py` (whole chain in one command) and 5 tests. |
 | 7 | João | Claude (Fable 5.2) | Asked which references the T2 code uses. | Table of the five references and what we still had to check ourselves. |
 | 8 | João | Claude Fable 5.2 | Gave the repository and the assignment and asked for help writing the Part II report in LaTeX. | A first draft in IEEE format built from the repository: table of the T1 rules (R1 to R8) with their references, description of the T2 circuit, results table for I1 to I5 and a list of limitations. The group then rewrote the text in its own words. |
+| 9 | Rodrigo | Opus 5.5 (Claude Code) | Ran a strict code-quality review of Part2/ and a check of the repository against the assignment (draft v0.7), using Claude Code as an assistant to surface issues. Directed the work item by item, deciding what to fix and implementing each point as its own commit: the validation, the qubit count in T1_report.md, the design decisions in the README, and the bonus of mapping the answer back to the Problem DSL. | Review: identified that two of the validation checks could never fail (see below), that the qubit column of T1_report.md disagreed with results.md, that the README no longer listed the design decisions the Part I log refers to, and that the generated script prints only the counts (7.2), which is now justified in the README. Code: validation.py now uses the feature model as the baseline, with four checks (CNF = baseline configurations, knownSolutions = M, measured success within 3σ of the theoretical one, most frequent measurement valid). run_t1.py reports the real T2 qubit count. New answer_to_problem.py builds the answer as a Problem DSL model (a SelectionRequest that fixes every feature). Six new tests (27 in total), and generated/ was regenerated with run_all.py. Design choices made by the author: the 3σ tolerance with a 0.01 floor, and representing the answer as a complete SelectionRequest. |
 
 ### What was wrong and how detected/fixed 
 
@@ -39,6 +40,35 @@ solutions ($M = 0$) was `rounds = 0`. That violates our OCL invariant
 not a Grover circuit. We detected it with `test_no_solution_instance` and fixed
 it by using `rounds = 1` when $M = 0$ (the oracle marks nothing, so the
 distribution is unchanged), documenting the choice in the report's limitations.
+
+- The validation written in an earlier LLM session (Part I log, session 17)
+compared the CNF of T1 with its own solutions: the measured configurations were
+counted as valid with `baseline.satisfies` on the same clauses that gave the
+expected solutions, and `knownSolutions` was computed by the same function. So
+`allFoundAreBaselineSolutions` and `knownSolutions == baselineSolutions` were
+always true, and a wrong T1 would still pass. The LLM pointed it out while
+reviewing the code in session 9; no test had caught it. We fixed it by validating against
+`baseline.feature_model_configurations`, which does not use the CNF, and added
+`test_a_wrong_cnf_is_caught` (a CNF where the Xor of I1 became an Or) and
+`test_a_wrong_oracle_is_caught` (uniform counts) to show that the checks can fail.
+
+- The qubit column of `T1_report.md` was `n + m + 1` (one ancilla per clause),
+from before T2 existed. T2 uses a counter, so the two reports gave different
+qubit counts for the same instance (I3: 32 and 17). We detected it by comparing
+`T1_report.md` with `results.md` and fixed it in `run_t1.py`.
+
+- The first version of the bonus wrote the answer model to
+`generated/<instance>/answer_model.py` with BESSER's code builder. The files
+could not be loaded: the builder writes the Problem DSL association
+`parent/children` as a Python variable with that name (`SyntaxError`). We
+detected it by reloading the generated file. We now build and check the answer
+model in memory (Problem DSL invariants and a T1 round trip) and do not write
+it, since renaming the association would change the Part I metamodel.
+
+- The first version of `test_a_wrong_cnf_is_caught` picked the clause to remove
+with a condition that made no sense and depended on how BESSER unlinks objects.
+It was noticed before the test was first run, and replaced with a
+CNF built by T1 from a modified feature model (Xor replaced by Or).
 
 
 
