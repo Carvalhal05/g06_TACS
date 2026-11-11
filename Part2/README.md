@@ -7,6 +7,7 @@ This folder contains the complete implementation of the Part II chain: **T1** (P
 Requires Python 3.12. Set up your virtual environment and install the required dependencies by running:
 
 ```
+cd Part2
 python3.12 -m venv .venv
 source .venv/bin/activate
 git clone https://github.com/jacomecunha/BESSER.git
