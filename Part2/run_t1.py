@@ -27,6 +27,7 @@ from metamodels import attr, objects_of
 import baseline
 import instances
 import t1_problem_to_cnf as t1
+import t2_cnf_to_quantum as t2
 
 OUT = Path(__file__).resolve().parent / "generated"
 
@@ -82,8 +83,9 @@ def run(shots=1024):
             raise RuntimeError(f"{inst}: CNF solutions differ from the feature model semantics")
         k, big_m = attr(cfg, "rounds"), attr(cfg, "knownSolutions")
         p = baseline.success_probability(n, big_m, k)
+        qubits = t2.transform(solution)[0].num_qubits
         summary.append(f"| {inst} | {desc} | {n} | {m} | {len(sols_cnf)} | {len(sols_fm)} | {k} | {p:.3f} "
-                       f"| {n + m + 1} | `{path.name}` |")
+                       f"| {qubits} | {n + m + 1} | `{path.name}` |")
 
         sec = [f"## {inst} · {name}", "", desc, "",
                "Variables (index = qubit): " + ", ".join(f"{i} {v}" for i, v in enumerate(names)), "",
@@ -102,10 +104,13 @@ def run(shots=1024):
         "M (CNF) is counted by brute force on the CNF produced by T1; M (FM) is counted directly on the",
         "feature model with the semantics of each construct, without the CNF. The two must agree.",
         "Rounds = ⌊π/4 · √(2ⁿ/M)⌋ (Boyer et al., 1998), 1 when M = 0. P(success) = sin²((2k+1)θ),",
-        "sin²θ = M/2ⁿ. n + m + 1 is the qubit count with one ancilla per clause plus the output qubit.",
+        "sin²θ = M/2ⁿ. Qubits (T2) is the size of the circuit built by T2 (search qubits, a counter of",
+        "violated clauses and the output qubit); n + m + 1 is, for comparison, the size with one ancilla",
+        "per clause plus the output qubit, which T2 does not use.",
         "",
-        "| Instance | Description | n | m | M (CNF) | M (FM) | Rounds k | P(success) | n + m + 1 | T1 output |",
-        "|---|---|---|---|---|---|---|---|---|---|",
+        "| Instance | Description | n | m | M (CNF) | M (FM) | Rounds k | P(success) | Qubits (T2) "
+        "| n + m + 1 (one ancilla per clause) | T1 output |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
         *summary,
         "",
         *sections,
