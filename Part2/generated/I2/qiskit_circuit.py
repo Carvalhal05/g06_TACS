@@ -21,7 +21,7 @@ import numpy as np
 
 # Function Gate Definitions
 
-def _function_gate_oracle_4619890720(num_qubits):
+def _function_gate_oracle_4541180688(num_qubits):
     """Custom gate: oracle"""
     qc_func = QuantumCircuit(num_qubits, name='oracle')
     qc_func.append(XGate().control(5, ctrl_state='11101'), [0, 1, 7, 8, 9, 10])
@@ -124,7 +124,7 @@ def _function_gate_oracle_4619890720(num_qubits):
     return qc_func.to_instruction()
 
 
-def _function_gate_diffuser_4623437504(num_qubits):
+def _function_gate_diffuser_4541121168(num_qubits):
     """Custom gate: diffuser"""
     qc_func = QuantumCircuit(num_qubits, name='diffuser')
     qc_func.h(0)
@@ -178,37 +178,37 @@ qc.append(XGate(), [q[11]])
 
 qc.append(HGate(), [q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_oracle_4619890720(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_oracle_4541180688(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
-qc.append(_function_gate_diffuser_4623437504(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
+qc.append(_function_gate_diffuser_4541121168(12), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]])
 
 qc.measure(q[0], c[0])
 
