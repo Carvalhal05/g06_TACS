@@ -9,6 +9,7 @@ from itertools import product
 
 import metamodels as mm
 from metamodels import attr, objects_of
+import answer_to_problem
 import baseline
 import checks
 import instances
@@ -246,6 +247,35 @@ class TestT2(unittest.TestCase):
         extra = len(layout["counter"]) + 1
         for bits in product((False, True), repeat=4):
             self.assertFalse(self.apply(oracle.gates, list(bits) + [False] * extra)[layout["output"]])
+
+
+class TestAnswerToProblem(unittest.TestCase):
+    def test_spec_rebuilds_the_same_feature_model(self):
+        for inst, (_d, problem, _request) in INSTANCES.items():
+            rebuilt = instances.build_problem_model(answer_to_problem.spec_of(problem))
+            a, _ = t1.transform(rebuilt)
+            self.assertEqual(baseline.cnf_solutions(a), baseline.feature_model_configurations(problem), inst)
+
+    def test_every_solution_maps_back_to_a_one_product_model(self):
+        for inst in ("I1", "I3"):
+            _d, problem, request = INSTANCES[inst]
+            for config in baseline.feature_model_configurations(problem, request):
+                model = answer_to_problem.answer_model(problem, config)
+                self.assertEqual(checks.check_problem_model(model), {}, inst)
+                out, _ = t1.transform(model, request_name="answer")
+                self.assertEqual(baseline.cnf_solutions(out), {config}, inst)
+
+    def test_an_invalid_configuration_is_refused(self):
+        _d, problem, _request = INSTANCES["I1"]
+        with self.assertRaises(answer_to_problem.AnswerError):
+            answer_to_problem.answer_model(problem, {"watch", "display", "analog", "digital"})   # Xor broken
+
+    def test_input_model_is_not_changed(self):
+        _d, problem, request = INSTANCES["I3"]
+        (config,) = list(baseline.feature_model_configurations(problem, request))[:1]
+        answer_to_problem.answer_model(problem, config)
+        (fm,) = objects_of(problem, mm.FeatureModel)
+        self.assertEqual(len(mm.linked(fm, "requests")), 1)
 
 
 if __name__ == "__main__":

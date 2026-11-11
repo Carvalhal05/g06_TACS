@@ -17,25 +17,29 @@ sampling noise), and (4) if M > 0, the most frequent measurement is a valid conf
 - Product line: MiniWatch. Request "digitalOnly": a product with Digital.
 - Answer, a valid product: Watch, Display, Digital.
 - Features left out: Analog.
+- Mapped back to the Problem DSL: SelectionRequest "answer" with 3 REQUIRED and 1 EXCLUDED FeatureChoices; it satisfies the Problem DSL invariants and T1 gives it exactly this one product.
 
 ### I2 · SmartWatch Part I version (7 features), onlyGPS (unique solution)
 
 - Product line: SmartWatch7. Request "onlyGPS": a product with GPS; without Heartrate.
 - Answer, a valid product: Watch, Display, Digital, Sensors, GPS.
 - Features left out: Analog, Heartrate.
+- Mapped back to the Problem DSL: SelectionRequest "answer" with 5 REQUIRED and 2 EXCLUDED FeatureChoices; it satisfies the Problem DSL invariants and T1 gives it exactly this one product.
 
 ### I3 · SmartWatch (11 features), onlyGPS (main example, several solutions)
 
 - Product line: SmartWatch. Request "onlyGPS": a product with GPS; without Heartrate.
-- Answer, a valid product: Watch, Display, Digital, Battery, Temperature, Weather, Sensors, GPS.
-- Features left out: Analog, StepsDistance, Heartrate.
+- Answer, a valid product: Watch, Display, Digital, Battery, StepsDistance, Weather, Sensors, GPS.
+- Features left out: Analog, Temperature, Heartrate.
 - It is one of 8 valid products; the run measured 8 of them (listed below).
+- Mapped back to the Problem DSL: SelectionRequest "answer" with 8 REQUIRED and 3 EXCLUDED FeatureChoices; it satisfies the Problem DSL invariants and T1 gives it exactly this one product.
 
 ### I4 · SmartWatch (11 features), fullDigital (largest, unique solution)
 
 - Product line: SmartWatch. Request "fullDigital": a product with GPS, StepsDistance, Temperature, Weather; without Heartrate.
 - Answer, a valid product: Watch, Display, Digital, Battery, StepsDistance, Temperature, Weather, Sensors, GPS.
 - Features left out: Analog, Heartrate.
+- Mapped back to the Problem DSL: SelectionRequest "answer" with 9 REQUIRED and 2 EXCLUDED FeatureChoices; it satisfies the Problem DSL invariants and T1 gives it exactly this one product.
 
 ### I5 · SmartWatch (11 features), analogWithGPS (no solution)
 
@@ -46,9 +50,9 @@ sampling noise), and (4) if M > 0, the most frequent measurement is a valid conf
 
 | Instance | n | Qubits (search + counter + output) | M | Rounds k | P measured | P theoretical | Solutions found | Oracle calls per shot | Brute-force evaluations | Result |
 |---|---|---|---|---|---|---|---|---|---|---|
-| I1 | 4 | 8 (4 + 3 + 1) | 1 | 3 | 0.969 | 0.961 | 1 of 1 | 3 | 16 | OK |
-| I2 | 7 | 12 (7 + 4 + 1) | 1 | 8 | 0.997 | 0.996 | 1 of 1 | 8 | 128 | OK |
-| I3 | 11 | 17 (11 + 5 + 1) | 8 | 12 | 1.000 | 1.000 | 8 of 8 | 12 | 2048 | OK |
+| I1 | 4 | 8 (4 + 3 + 1) | 1 | 3 | 0.953 | 0.961 | 1 of 1 | 3 | 16 | OK |
+| I2 | 7 | 12 (7 + 4 + 1) | 1 | 8 | 0.994 | 0.996 | 1 of 1 | 8 | 128 | OK |
+| I3 | 11 | 17 (11 + 5 + 1) | 8 | 12 | 0.999 | 1.000 | 8 of 8 | 12 | 2048 | OK |
 | I4 | 11 | 17 (11 + 5 + 1) | 1 | 35 | 1.000 | 1.000 | 1 of 1 | 35 | 2048 | OK |
 | I5 | 11 | 17 (11 + 5 + 1) | 0 | 1 | 0.000 | 0.000 | 0 of 0 | 1 | 2048 | OK |
 
@@ -59,7 +63,7 @@ sampling noise), and (4) if M > 0, the most frequent measurement is a valid conf
 | Variables n / clauses m / states N | 4 / 8 / 16 |
 | Solutions M (classical brute force on the feature model) | 1 (SolverConfig.knownSolutions = 1) |
 | Grover rounds k / shots | 3 / 1024 |
-| Success probability, measured | 0.969 (992 of 1024 shots) |
+| Success probability, measured | 0.953 (976 of 1024 shots) |
 | Success probability, theoretical sin²((2k+1)θ) | 0.961 |
 | Distinct valid configurations measured | 1 of 1 |
 | Check: solutions of the T1 CNF = baseline configurations | yes |
@@ -68,13 +72,13 @@ sampling noise), and (4) if M > 0, the most frequent measurement is a valid conf
 | Check: most frequent measurement is a valid configuration (when M > 0) | yes |
 | Oracle calls: per shot / total | 3 / 3072 |
 | Classical brute force: formula evaluations | 16 |
-| Most frequent bitstring | `1011` (992 shots): Digital, Display, Watch — valid |
+| Most frequent bitstring | `1011` (976 shots): Digital, Display, Watch — valid |
 
 Valid configurations measured (shots):
 
-- Digital, Display, Watch (992)
+- Digital, Display, Watch (976)
 
-Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation time: 7.7 s
+Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation time: 2.7 s
 
 ### I2 · SmartWatch Part I version (7 features), onlyGPS (unique solution)
 
@@ -83,7 +87,7 @@ Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation
 | Variables n / clauses m / states N | 7 / 15 / 128 |
 | Solutions M (classical brute force on the feature model) | 1 (SolverConfig.knownSolutions = 1) |
 | Grover rounds k / shots | 8 / 1024 |
-| Success probability, measured | 0.997 (1021 of 1024 shots) |
+| Success probability, measured | 0.994 (1018 of 1024 shots) |
 | Success probability, theoretical sin²((2k+1)θ) | 0.996 |
 | Distinct valid configurations measured | 1 of 1 |
 | Check: solutions of the T1 CNF = baseline configurations | yes |
@@ -92,13 +96,13 @@ Generated code: `I1/qiskit_circuit.py` · counts: `I1/counts.json` · simulation
 | Check: most frequent measurement is a valid configuration (when M > 0) | yes |
 | Oracle calls: per shot / total | 8 / 8192 |
 | Classical brute force: formula evaluations | 128 |
-| Most frequent bitstring | `0111011` (1021 shots): Digital, Display, GPS, Sensors, Watch — valid |
+| Most frequent bitstring | `0111011` (1018 shots): Digital, Display, GPS, Sensors, Watch — valid |
 
 Valid configurations measured (shots):
 
-- Digital, Display, GPS, Sensors, Watch (1021)
+- Digital, Display, GPS, Sensors, Watch (1018)
 
-Generated code: `I2/qiskit_circuit.py` · counts: `I2/counts.json` · simulation time: 0.4 s
+Generated code: `I2/qiskit_circuit.py` · counts: `I2/counts.json` · simulation time: 0.5 s
 
 ### I3 · SmartWatch (11 features), onlyGPS (main example, several solutions)
 
@@ -107,7 +111,7 @@ Generated code: `I2/qiskit_circuit.py` · counts: `I2/counts.json` · simulation
 | Variables n / clauses m / states N | 11 / 20 / 2048 |
 | Solutions M (classical brute force on the feature model) | 8 (SolverConfig.knownSolutions = 8) |
 | Grover rounds k / shots | 12 / 1024 |
-| Success probability, measured | 1.000 (1024 of 1024 shots) |
+| Success probability, measured | 0.999 (1023 of 1024 shots) |
 | Success probability, theoretical sin²((2k+1)θ) | 1.000 |
 | Distinct valid configurations measured | 8 of 8 |
 | Check: solutions of the T1 CNF = baseline configurations | yes |
@@ -116,20 +120,20 @@ Generated code: `I2/qiskit_circuit.py` · counts: `I2/counts.json` · simulation
 | Check: most frequent measurement is a valid configuration (when M > 0) | yes |
 | Oracle calls: per shot / total | 12 / 12288 |
 | Classical brute force: formula evaluations | 2048 |
-| Most frequent bitstring | `01111011011` (145 shots): Battery, Digital, Display, GPS, Sensors, Temperature, Watch, Weather — valid |
+| Most frequent bitstring | `01110111011` (159 shots): Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch, Weather — valid |
 
 Valid configurations measured (shots):
 
-- Battery, Digital, Display, GPS, Sensors, Temperature, Watch, Weather (145)
-- Battery, Digital, Display, GPS, Sensors, Watch (136)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch (135)
-- Battery, Digital, Display, GPS, Sensors, Temperature, Watch (133)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch (131)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch, Weather (122)
-- Battery, Digital, Display, GPS, Sensors, Watch, Weather (119)
-- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (103)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch, Weather (159)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Watch (143)
+- Battery, Digital, Display, GPS, Sensors, Watch (133)
+- Battery, Digital, Display, GPS, Sensors, Temperature, Watch (131)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch (125)
+- Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (112)
+- Battery, Digital, Display, GPS, Sensors, Watch, Weather (111)
+- Battery, Digital, Display, GPS, Sensors, Temperature, Watch, Weather (109)
 
-Generated code: `I3/qiskit_circuit.py` · counts: `I3/counts.json` · simulation time: 1.9 s
+Generated code: `I3/qiskit_circuit.py` · counts: `I3/counts.json` · simulation time: 1.4 s
 
 ### I4 · SmartWatch (11 features), fullDigital (largest, unique solution)
 
@@ -153,7 +157,7 @@ Valid configurations measured (shots):
 
 - Battery, Digital, Display, GPS, Sensors, StepsDistance, Temperature, Watch, Weather (1024)
 
-Generated code: `I4/qiskit_circuit.py` · counts: `I4/counts.json` · simulation time: 4.2 s
+Generated code: `I4/qiskit_circuit.py` · counts: `I4/counts.json` · simulation time: 3.5 s
 
 ### I5 · SmartWatch (11 features), analogWithGPS (no solution)
 
@@ -171,8 +175,8 @@ Generated code: `I4/qiskit_circuit.py` · counts: `I4/counts.json` · simulation
 | Check: most frequent measurement is a valid configuration (when M > 0) | yes |
 | Oracle calls: per shot / total | 1 / 1024 |
 | Classical brute force: formula evaluations | 2048 |
-| Most frequent bitstring | `10110001101` (4 shots): Analog, Digital, Heartrate, Sensors, Watch, Weather — not valid |
+| Most frequent bitstring | `00001000110` (4 shots): Analog, Display, Temperature — not valid |
 
 No valid configuration was measured: the request cannot be satisfied.
 
-Generated code: `I5/qiskit_circuit.py` · counts: `I5/counts.json` · simulation time: 0.4 s
+Generated code: `I5/qiskit_circuit.py` · counts: `I5/counts.json` · simulation time: 0.3 s

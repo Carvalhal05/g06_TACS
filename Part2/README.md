@@ -36,6 +36,7 @@ python run_all.py                     # Run end-to-end chain (T1 → T2 → T3 �
 | `run_t1.py` | Executes T1 across all instances and builds `generated/`. |
 | `run_all.py` | Executes the full end-to-end chain (T1 → T2 → T3 → Qiskit Aer simulation → Validation). |
 | `validation.py` | **Validation**: decodes Grover simulation counts and compares them with the baseline. |
+| `answer_to_problem.py` | Maps the answer back to the Problem DSL: a SelectionRequest fixing every feature, checked against the Problem DSL invariants and by a T1 round trip (bonus). |
 | `test_part2.py` | Unit tests for the pipeline. |
 | `generated/` | Generated B-UML models, T1 report, execution logs, and Qiskit circuits (do not edit manually). |
 | `AILog.md` | LLM usage log for Part II. |

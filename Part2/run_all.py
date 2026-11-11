@@ -11,6 +11,8 @@ For each instance of instances.py:
   5. validation: the counts are decoded into features and compared with the classical baseline
   6. the answer is written in domain terms: the product (features selected and left out) that
      answers the selection request, or that no product can satisfy it
+  7. the answer is mapped back to the Problem DSL (answer_to_problem.py): a SelectionRequest that
+     fixes every feature, checked against the Problem DSL invariants and by a T1 round trip
 
 Results: generated/results.md.
 """
@@ -26,6 +28,7 @@ from besser.generators.qiskit.qiskit_generator import QiskitGenerator
 
 import metamodels as mm
 from metamodels import attr, linked, objects_of
+import answer_to_problem
 import baseline
 import instances
 import run_t1
@@ -61,10 +64,24 @@ def run_instance(inst, problem, request, shots):
     (folder / "counts.json").write_text(json.dumps(counts, indent=1, sort_keys=True), encoding="utf-8")
 
     results = validation.validate(solution, counts, problem, request)
-    return results, layout, seconds, domain_answer(problem, request, solution, results)
+    answer = answer_in_problem_dsl(problem, solution, results)
+    return results, layout, seconds, domain_answer(problem, request, solution, results, answer)
 
 
-def domain_answer(problem, request, solution, r):
+def answer_in_problem_dsl(problem, solution, r):
+    """The answer (most frequent valid measurement) mapped back to a Problem DSL model, or None.
+
+    The model is checked by answer_to_problem (Problem DSL invariants and T1 round trip). It is not
+    written to a file: BESSER's code builder writes the association "parent/children" of the
+    Problem DSL as a Python variable with that name, which is not valid Python.
+    """
+    if r["mostFrequent"] is None or not r["mostFrequent"][3]:
+        return None
+    variables, _clauses = baseline.read_cnf(solution)
+    return answer_to_problem.answer_model(problem, validation.decode(r["mostFrequent"][0], variables))
+
+
+def domain_answer(problem, request, solution, r, answer_model=None):
     """The result of the run in domain terms (product line, request, product), read from the models.
 
     Measured bit i -> Variable with index i (Solution DSL) -> Feature with that id (Problem DSL).
@@ -98,6 +115,11 @@ def domain_answer(problem, request, solution, r):
         if r["baselineSolutions"] > 1:
             lines.append(f"It is one of {r['baselineSolutions']} valid products; the run measured "
                          f"{r['foundSolutions']} of them (listed below).")
+    if answer_model is not None:
+        types = [attr(ch, "type") for ch in objects_of(answer_model, mm.FeatureChoice)]
+        lines.append(f"Mapped back to the Problem DSL: SelectionRequest \"answer\" with "
+                     f"{types.count('REQUIRED')} REQUIRED and {types.count('EXCLUDED')} EXCLUDED FeatureChoices; "
+                     "it satisfies the Problem DSL invariants and T1 gives it exactly this one product.")
     return lines
 
 

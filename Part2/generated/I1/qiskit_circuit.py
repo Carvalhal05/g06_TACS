@@ -21,7 +21,7 @@ import numpy as np
 
 # Function Gate Definitions
 
-def _function_gate_oracle_2170691823392(num_qubits):
+def _function_gate_oracle_2097593048320(num_qubits):
     """Custom gate: oracle"""
     qc_func = QuantumCircuit(num_qubits, name='oracle')
     qc_func.append(XGate().control(4, ctrl_state='1101'), [0, 1, 4, 5, 6])
@@ -64,7 +64,7 @@ def _function_gate_oracle_2170691823392(num_qubits):
     return qc_func.to_instruction()
 
 
-def _function_gate_diffuser_2170691827376(num_qubits):
+def _function_gate_diffuser_2097593053648(num_qubits):
     """Custom gate: diffuser"""
     qc_func = QuantumCircuit(num_qubits, name='diffuser')
     qc_func.h(0)
@@ -106,17 +106,17 @@ qc.append(XGate(), [q[7]])
 
 qc.append(HGate(), [q[7]])
 
-qc.append(_function_gate_oracle_2170691823392(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
+qc.append(_function_gate_oracle_2097593048320(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
 
-qc.append(_function_gate_diffuser_2170691827376(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
+qc.append(_function_gate_diffuser_2097593053648(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
 
-qc.append(_function_gate_oracle_2170691823392(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
+qc.append(_function_gate_oracle_2097593048320(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
 
-qc.append(_function_gate_diffuser_2170691827376(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
+qc.append(_function_gate_diffuser_2097593053648(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
 
-qc.append(_function_gate_oracle_2170691823392(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
+qc.append(_function_gate_oracle_2097593048320(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
 
-qc.append(_function_gate_diffuser_2170691827376(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
+qc.append(_function_gate_diffuser_2097593053648(8), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]])
 
 qc.measure(q[0], c[0])
 
